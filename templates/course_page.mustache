@@ -1,0 +1,24 @@
+{{^students}}
+    <div class="alert alert-info">{{#str}} noeventsfound, local_pmlog {{/str}}</div>
+{{/students}}
+
+{{#students}}
+    <table class="generaltable table table-hover">
+        <thead>
+            <tr>
+                <th>{{#str}} thstudent, local_pmlog {{/str}}</th>
+                <th>{{#str}} thevents, local_pmlog {{/str}}</th>
+                <th>{{#str}} thtimeline, local_pmlog {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#list}}
+            <tr>
+                <td>{{name}}</td>
+                <td>{{count}}</td>
+                <td><a href="{{timelineurl}}">{{#str}} opentimeline, local_pmlog {{/str}}</a></td>
+            </tr>
+            {{/list}}
+        </tbody>
+    </table>
+{{/students}}

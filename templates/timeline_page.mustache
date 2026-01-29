@@ -1,0 +1,11 @@
+<h3>{{userfullname}} — {{coursename}}</h3>
+
+{{^events}}
+    <div class="alert alert-info">No events found for this student in this course.</div>
+{{/events}}
+
+<ul>
+{{#events}}
+    <li><strong>{{time}}</strong> — {{label}}{{suffix}}</li>
+{{/events}}
+</ul>

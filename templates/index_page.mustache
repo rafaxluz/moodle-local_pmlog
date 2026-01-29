@@ -1,0 +1,9 @@
+<h3>{{#str}} buildnormalizedlog, local_pmlog {{/str}}</h3>
+
+{{#results}}
+    <div class="alert alert-success mt-3">
+        Raw: {{raw_count}} | Stored: {{stored_count}} | Skipped: {{skipped_count}}
+        {{#dedup_skipped}} | {{#str}} dedupskipped, local_pmlog {{/str}}: {{dedup_skipped}}{{/dedup_skipped}}
+        {{#note}} | {{#str}} note, local_pmlog {{/str}}: {{note}}{{/note}}
+    </div>
+{{/results}}
