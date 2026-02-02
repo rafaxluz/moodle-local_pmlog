@@ -2,7 +2,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_pmlog';
-$plugin->version   = 2026011202;
+$plugin->version   = 2026020202;
 $plugin->requires  = 2019111800;
 $plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
+$plugin->release   = '0.1.3';
