@@ -1,8 +1,28 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+    @package    local_pmlog
+    @copyright  2026 rafaxluz
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
 <h3>{{#str}} buildnormalizedlog, local_pmlog {{/str}}</h3>
 
 {{#results}}
     <div class="alert alert-success mt-3">
-        Raw: {{raw_count}} | Stored: {{stored_count}} | Skipped: {{skipped_count}}
+        {{#str}} raw, local_pmlog {{/str}}: {{raw_count}} | {{#str}} stored, local_pmlog {{/str}}: {{stored_count}} | {{#str}} skipped, local_pmlog {{/str}}: {{skipped_count}}
         {{#dedup_skipped}} | {{#str}} dedupskipped, local_pmlog {{/str}}: {{dedup_skipped}}{{/dedup_skipped}}
         {{#note}} | {{#str}} note, local_pmlog {{/str}}: {{note}}{{/note}}
     </div>
