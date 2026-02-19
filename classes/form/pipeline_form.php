@@ -11,8 +11,16 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Pipeline configuration form.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_pmlog\form;
 
 defined('MOODLE_INTERNAL') || die();
@@ -49,6 +57,9 @@ class pipeline_form extends \moodleform {
 
         $mform->addElement('checkbox', 'dedup', get_string('dedup', 'local_pmlog'));
         $mform->setDefault('dedup', 1);
+
+        $mform->addElement('checkbox', 'dedup_strict_cmid', 'Remove sequential CMID duplicates (Strict)');
+        $mform->setDefault('dedup_strict_cmid', 0);
 
         $mform->addElement('text', 'dedupwindow', get_string('dedupwindow', 'local_pmlog'));
         $mform->setType('dedupwindow', PARAM_INT);

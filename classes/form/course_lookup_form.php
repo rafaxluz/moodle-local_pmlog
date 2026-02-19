@@ -11,8 +11,16 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Course lookup form.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_pmlog\form;
 
 defined('MOODLE_INTERNAL') || die();
