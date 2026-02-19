@@ -28,10 +28,19 @@ defined('MOODLE_INTERNAL') || die();
 
 class extractor_standardlog {
     /**
-     * @return array<int, \stdClass> raw events
+     * Extract raw event data from the standard log.
+     *
+     * @param int $courseid The course ID.
+     * @param int $timestart Optional start timestamp.
+     * @param int $timeend Optional end timestamp.
+     * @param array $userids Optional list of user IDs to filter by.
+     * @param array $options Additional options (e.g. 'studentonly').
+     * @return array<int, \stdClass> Raw events.
      */
-    public function extract(int $courseid, int $timestart = 0, int $timeend = 0, array $userids = [], bool $studentonly = false): array {
+    public function extract(int $courseid, int $timestart = 0, int $timeend = 0, array $userids = [], array $options = []): array {
         global $DB;
+
+        $studentonly = !empty($options['studentonly']);
 
         // JOIN with user table to get user details and avoid separate lookups.
         $sql = "SELECT l.*, u.firstname, u.lastname, u.email, u.idnumber
@@ -57,17 +66,20 @@ class extractor_standardlog {
         }
 
         if ($studentonly) {
-            // Filter students using a subquery on role assignments.
-            // We look for users with 'student' role in the course context.
             $context = \context_course::instance($courseid, IGNORE_MISSING);
             if (!$context) {
                 return [];
             }
             
-            // Get student role IDs.
-            $studentroles = $DB->get_records_select_menu('role', "shortname = ? OR archetype = ?", ['student', 'student'], '', 'id, id');
+            $studentroles = $DB->get_records_select_menu(
+                'role',
+                "shortname = ? OR archetype = ?",
+                ['student', 'student'],
+                '',
+                'id, id'
+            );
             if (empty($studentroles)) {
-                 return []; // No student role defined?
+                 return [];
             }
             list($rinsql, $rinparams) = $DB->get_in_or_equal(array_keys($studentroles), SQL_PARAMS_NAMED, 'rid');
 

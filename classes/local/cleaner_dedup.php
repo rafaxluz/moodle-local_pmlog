@@ -34,44 +34,45 @@ class cleaner_dedup {
      * @param \stdClass[] $rows
      * @return \stdClass[]
      */
-	/**
-	 * Key-window dedup:
-	 * For each caseid, skip events with same (activity + cmid) that occur within the window,
-	 * even if they are not consecutive.
-	 *
-	 * @param \stdClass[] $rows
-	 * @return \stdClass[]
-	 */
-	public function dedup_sequential(array $rows, int $windowseconds = 30): array {
-		$out = [];
+    /**
+     * Key-window dedup:
+     * For each caseid, skip events with same (activity + cmid) that occur within the window,
+     * even if they are not consecutive.
+     *
+     * @param \stdClass[] $rows
+     * @param int $windowseconds
+     * @return \stdClass[]
+     */
+    public function dedup_sequential(array $rows, int $windowseconds = 30): array {
+        $out = [];
 
-		$lastseen = [];
+        $lastseen = [];
 
-		foreach ($rows as $row) {
-			$caseid = (string)$row->caseid;
-			$activity = (string)$row->activity;
-			$cmid = isset($row->cmid) ? (int)$row->cmid : 0;
-			$t = (int)$row->timecreated;
+        foreach ($rows as $row) {
+            $caseid = (string)$row->caseid;
+            $activity = (string)$row->activity;
+            $cmid = isset($row->cmid) ? (int)$row->cmid : 0;
+            $t = (int)$row->timecreated;
 
-			if (!isset($lastseen[$caseid])) {
-				$lastseen[$caseid] = [];
-			}
+            if (!isset($lastseen[$caseid])) {
+                $lastseen[$caseid] = [];
+            }
 
-			$key = $activity . '|' . $cmid;
+            $key = $activity . '|' . $cmid;
 
-			if (isset($lastseen[$caseid][$key])) {
-				$lastt = (int)$lastseen[$caseid][$key];
-				if (($t - $lastt) <= $windowseconds) {
-					continue;
-				}
-			}
+            if (isset($lastseen[$caseid][$key])) {
+                $lastt = (int)$lastseen[$caseid][$key];
+                if (($t - $lastt) <= $windowseconds) {
+                    continue;
+                }
+            }
 
-			$lastseen[$caseid][$key] = $t;
-			$out[] = $row;
-		}
+            $lastseen[$caseid][$key] = $t;
+            $out[] = $row;
+        }
 
-		return $out;
-	}
+        return $out;
+    }
 
     /**
      * Strict CMID Deduplication:
@@ -84,7 +85,7 @@ class cleaner_dedup {
      */
     public function dedup_strict_cmid(array $rows): array {
         $out = [];
-        $lastcmidv = []; // caseid => last_cmid
+        $lastcmidv = [];
 
         foreach ($rows as $row) {
             $caseid = (string)$row->caseid;
@@ -121,9 +122,7 @@ class cleaner_dedup {
      */
     public function collapse_navigation(array $rows, int $courseviewwindow = 1800, int $moduleviewwindow = 600): array {
         $out = [];
-
         $lastcourseview = [];
-
         $lastmoduleview = [];
 
         foreach ($rows as $row) {
@@ -132,30 +131,11 @@ class cleaner_dedup {
             $t = (int)$row->timecreated;
             $cmid = isset($row->cmid) ? (int)$row->cmid : 0;
 
-            if ($activity === 'Course view') {
-                $lastt = $lastcourseview[$caseid] ?? null;
-                if ($lastt !== null && ($t - (int)$lastt) <= $courseviewwindow) {
-                    continue;
-                }
-                $lastcourseview[$caseid] = $t;
-                $out[] = $row;
+            if ($this->should_collapse_course_view($activity, $caseid, $t, $courseviewwindow, $lastcourseview)) {
                 continue;
             }
 
-            if ($activity === 'View course module') {
-                if (!isset($lastmoduleview[$caseid])) {
-                    $lastmoduleview[$caseid] = [];
-                }
-
-                $key = $cmid > 0 ? (string)$cmid : '_nocmid';
-                $lastt = $lastmoduleview[$caseid][$key] ?? null;
-
-                if ($lastt !== null && ($t - (int)$lastt) <= $moduleviewwindow) {
-                    continue;
-                }
-
-                $lastmoduleview[$caseid][$key] = $t;
-                $out[] = $row;
+            if ($this->should_collapse_module_view($activity, $caseid, $t, $cmid, $moduleviewwindow, $lastmoduleview)) {
                 continue;
             }
 
@@ -163,5 +143,39 @@ class cleaner_dedup {
         }
 
         return $out;
+    }
+
+    private function should_collapse_course_view(string $activity, string $caseid, int $t, int $window, array &$lastcourseview): bool {
+        if ($activity !== 'Course view') {
+            return false;
+        }
+
+        $lastt = $lastcourseview[$caseid] ?? null;
+        if ($lastt !== null && ($t - (int)$lastt) <= $window) {
+            return true;
+        }
+
+        $lastcourseview[$caseid] = $t;
+        return false;
+    }
+
+    private function should_collapse_module_view(string $activity, string $caseid, int $t, int $cmid, int $window, array &$lastmoduleview): bool {
+        if ($activity !== 'View course module') {
+            return false;
+        }
+
+        if (!isset($lastmoduleview[$caseid])) {
+            $lastmoduleview[$caseid] = [];
+        }
+
+        $key = $cmid > 0 ? (string)$cmid : '_nocmid';
+        $lastt = $lastmoduleview[$caseid][$key] ?? null;
+
+        if ($lastt !== null && ($t - (int)$lastt) <= $window) {
+            return true;
+        }
+
+        $lastmoduleview[$caseid][$key] = $t;
+        return false;
     }
 }

@@ -31,6 +31,7 @@ class userresolver {
      * Get enrolled users in the course that have the "student" role (shortname) in the course context
      * (including roles inherited from parent contexts).
      *
+     * @param int $courseid The course ID.
      * @return int[] userids
      */
     public function get_student_userids(int $courseid): array {

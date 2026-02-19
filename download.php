@@ -33,18 +33,18 @@ require_capability('local/pmlog:manage', $context);
 
 $filename = (string)get_config('local_pmlog', 'last_csv_course_' . $courseid);
 if ($filename === '') {
-    throw new moodle_exception('CSV not found. Run the pipeline with CSV export enabled first.');
+    throw new moodle_exception(get_string('error_csvnotfound', 'local_pmlog'));
 }
 
 $dir = $CFG->dataroot . DIRECTORY_SEPARATOR . 'temp' . DIRECTORY_SEPARATOR . 'local_pmlog';
 $fullpath = $dir . DIRECTORY_SEPARATOR . $filename;
 
 if (!file_exists($fullpath)) {
-    throw new moodle_exception('CSV file missing on disk. Re-run the export.');
+    throw new moodle_exception(get_string('error_csvmissing', 'local_pmlog'));
 }
 
 if (headers_sent($file, $line)) {
-    throw new moodle_exception("Headers already sent in {$file} on line {$line}. Cannot download CSV safely.");
+    throw new moodle_exception(get_string('error_headerssent', 'local_pmlog', ['file' => $file, 'line' => $line]));
 }
 
 while (ob_get_level() > 0) {
@@ -70,7 +70,7 @@ if ($size !== false) {
 
 $fh = fopen($fullpath, 'rb');
 if ($fh === false) {
-    throw new moodle_exception('Could not open CSV for reading.');
+    throw new moodle_exception(get_string('error_csvopenread', 'local_pmlog'));
 }
 fpassthru($fh);
 fclose($fh);

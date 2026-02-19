@@ -127,10 +127,10 @@ global $DB;
 echo html_writer::start_div('d-flex mb-3 align-items-center gap-3');
 
 $sortoptions = [
-    'events_desc' => get_string('sortby', 'core') . ': ' . get_string('thevents', 'local_pmlog') . ' (' . get_string('desc', 'core') . ')',
-    'events_asc'  => get_string('sortby', 'core') . ': ' . get_string('thevents', 'local_pmlog') . ' (' . get_string('asc', 'core') . ')',
-    'name_asc'    => get_string('sortby', 'core') . ': ' . get_string('thstudent', 'local_pmlog') . ' (A-Z)',
-    'name_desc'   => get_string('sortby', 'core') . ': ' . get_string('thstudent', 'local_pmlog') . ' (Z-A)',
+    'events_desc' => get_string('sort_events_desc', 'local_pmlog'),
+    'events_asc'  => get_string('sort_events_asc', 'local_pmlog'),
+    'name_asc'    => get_string('sort_name_asc', 'local_pmlog'),
+    'name_desc'   => get_string('sort_name_desc', 'local_pmlog'),
 ];
 
 $sortselector = new single_select($url, 'sort', $sortoptions, $sort, null);

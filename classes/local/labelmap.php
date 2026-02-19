@@ -30,6 +30,9 @@ class labelmap {
     /**
      * Return a human-friendly activity label for a raw log row.
      * If no mapping matches, fallback to "action:target".
+     *
+     * @param \stdClass $raw The raw event object.
+     * @return string The human-friendly label.
      */
     public static function map(\stdClass $raw): string {
         $component = $raw->component ?? '';

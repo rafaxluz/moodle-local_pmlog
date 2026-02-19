@@ -30,6 +30,9 @@ class modulelabeler {
     /**
      * Given a cmid, return a specific "X open" label (Quiz open, Page open, ...)
      * or null if unknown.
+     *
+     * @param int|null $cmid The course module ID.
+     * @return string|null The specific label or null.
      */
     public function label_from_cmid(?int $cmid): ?string {
         global $DB;

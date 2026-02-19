@@ -30,6 +30,9 @@ class activitygroupmap {
 
     /**
      * Map a detailed activity label to a coarse activity group.
+     *
+     * @param string $activity The activity name/label.
+     * @return string The mapped group name.
      */
     public static function group(string $activity): string {
         $a = strtolower($activity);
