@@ -1,4 +1,27 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Pipeline service for processing event logs.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_pmlog\local;
 
 defined('MOODLE_INTERNAL') || die();
@@ -32,6 +55,7 @@ class pipeline_service {
 
         $studentonly = (bool)($options['studentonly'] ?? false);
         $dedup = (bool)($options['dedup'] ?? true);
+        $dedupStrictCmid = (bool)($options['dedup_strict_cmid'] ?? false);
         $dedupwindow = (int)($options['dedupwindow'] ?? 30);
 
         $userids = [];
@@ -121,6 +145,12 @@ class pipeline_service {
 
         if ($dedup) {
             $rows = $this->cleaner->dedup_sequential($rows, $dedupwindow);
+            
+            // New strict deduplication: remove sequential CMID repetitions
+            if ($dedupStrictCmid) {
+                $rows = $this->cleaner->dedup_strict_cmid($rows);
+            }
+
             $cwindow = (int)($options['courseviewwindow'] ?? 18000000);
             $mwindow = (int)($options['moduleviewwindow'] ?? 18000000);
             $rows = $this->cleaner->collapse_navigation($rows, $cwindow, $mwindow);
@@ -140,6 +170,7 @@ class pipeline_service {
             'cleared' => $clear,
             'studentonly' => $studentonly,
             'dedup' => $dedup,
+            'dedup_strict_cmid' => $dedupStrictCmid,
             'dedupwindow' => $dedupwindow,
         ];
     }
