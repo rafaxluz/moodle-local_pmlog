@@ -57,17 +57,14 @@ class extractor_standardlog {
         }
 
         if ($studentonly) {
-            // Filter students using a subquery on role assignments.
-            // We look for users with 'student' role in the course context.
             $context = \context_course::instance($courseid, IGNORE_MISSING);
             if (!$context) {
                 return [];
             }
             
-            // Get student role IDs.
             $studentroles = $DB->get_records_select_menu('role', "shortname = ? OR archetype = ?", ['student', 'student'], '', 'id, id');
             if (empty($studentroles)) {
-                 return []; // No student role defined?
+                 return [];
             }
             list($rinsql, $rinparams) = $DB->get_in_or_equal(array_keys($studentroles), SQL_PARAMS_NAMED, 'rid');
 

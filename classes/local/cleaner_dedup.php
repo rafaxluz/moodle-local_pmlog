@@ -84,7 +84,7 @@ class cleaner_dedup {
      */
     public function dedup_strict_cmid(array $rows): array {
         $out = [];
-        $lastcmidv = []; // caseid => last_cmid
+        $lastcmidv = [];
 
         foreach ($rows as $row) {
             $caseid = (string)$row->caseid;

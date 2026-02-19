@@ -39,8 +39,8 @@ if ($perpage !== 100) {
 
 $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
-$PAGE->set_title('Student timeline');
-$PAGE->set_heading('Student timeline');
+$PAGE->set_title(get_string('studenttimeline', 'local_pmlog'));
+$PAGE->set_heading(get_string('studenttimeline', 'local_pmlog'));
 
 echo $OUTPUT->header();
 
@@ -58,7 +58,7 @@ $options = [
     5000 => get_string('all', 'core'),
 ];
 $selector = new single_select($url, 'perpage', $options, $perpage, null);
-$selector->set_label(get_string('perpage', 'moodle')); // 'Items per page'
+$selector->set_label(get_string('perpage', 'moodle'));
 
 echo html_writer::div($OUTPUT->render($selector), 'mb-3');
 

@@ -35,7 +35,7 @@ class pipeline_form extends \moodleform {
         $courseid = $this->_customdata['courseid'] ?? 0;
         $isadmin  = !empty($this->_customdata['isadmin']);
 
-        $mform->addElement('header', 'general', get_string('buildnormalizedlog', 'local_pmlog'));
+        $mform->addElement('html', \html_writer::tag('h4', get_string('buildnormalizedlog', 'local_pmlog')));
 
         if ($isadmin) {
             $mform->addElement('text', 'courseid', get_string('courseid', 'local_pmlog'));
@@ -58,7 +58,7 @@ class pipeline_form extends \moodleform {
         $mform->addElement('checkbox', 'dedup', get_string('dedup', 'local_pmlog'));
         $mform->setDefault('dedup', 1);
 
-        $mform->addElement('checkbox', 'dedup_strict_cmid', 'Remove sequential CMID duplicates (Strict)');
+        $mform->addElement('checkbox', 'dedup_strict_cmid', get_string('dedup_strict_cmid', 'local_pmlog'));
         $mform->setDefault('dedup_strict_cmid', 0);
 
         $mform->addElement('text', 'dedupwindow', get_string('dedupwindow', 'local_pmlog'));
@@ -79,7 +79,7 @@ class pipeline_form extends \moodleform {
         $mform->addElement('checkbox', 'exportcsv', get_string('exportcsv', 'local_pmlog'));
         $mform->setDefault('exportcsv', 1);
 
-        $mform->addElement('submit', 'submitbutton', get_string('runpipeline', 'local_pmlog'));
+        $this->add_action_buttons(false, get_string('runpipeline', 'local_pmlog'));
     }
 
     public function validation($data, $files) {
