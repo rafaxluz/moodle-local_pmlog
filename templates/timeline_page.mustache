@@ -17,6 +17,21 @@
     @package    local_pmlog
     @copyright  2026 rafaxluz
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    @template local_pmlog/timeline_page
+
+    Example context (json):
+    {
+        "userfullname": "John Doe",
+        "coursename": "Introduction to Moodle",
+        "events": [
+            {
+                "time": "2026-02-20 10:00:00",
+                "label": "Course view",
+                "suffix": ""
+            }
+        ]
+    }
 }}
 <div class="mb-3">
     <button class="btn btn-secondary" onclick="history.back()">{{#str}}back, core{{/str}}</button>

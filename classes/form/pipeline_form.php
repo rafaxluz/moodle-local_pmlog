@@ -11,6 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
+// You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
@@ -27,15 +28,25 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
+/**
+ * Pipeline form class.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class pipeline_form extends \moodleform {
 
+    /**
+     * Define the form.
+     */
     public function definition() {
         $mform = $this->_form;
 
         $courseid = $this->_customdata['courseid'] ?? 0;
         $isadmin  = !empty($this->_customdata['isadmin']);
 
-        $mform->addElement('header', 'general', get_string('buildnormalizedlog', 'local_pmlog'));
+        $mform->addElement('html', \html_writer::tag('h4', get_string('buildnormalizedlog', 'local_pmlog')));
 
         if ($isadmin) {
             $mform->addElement('text', 'courseid', get_string('courseid', 'local_pmlog'));
@@ -58,7 +69,7 @@ class pipeline_form extends \moodleform {
         $mform->addElement('checkbox', 'dedup', get_string('dedup', 'local_pmlog'));
         $mform->setDefault('dedup', 1);
 
-        $mform->addElement('checkbox', 'dedup_strict_cmid', 'Remove sequential CMID duplicates (Strict)');
+        $mform->addElement('checkbox', 'dedup_strict_cmid', get_string('dedup_strict_cmid', 'local_pmlog'));
         $mform->setDefault('dedup_strict_cmid', 0);
 
         $mform->addElement('text', 'dedupwindow', get_string('dedupwindow', 'local_pmlog'));
@@ -79,9 +90,16 @@ class pipeline_form extends \moodleform {
         $mform->addElement('checkbox', 'exportcsv', get_string('exportcsv', 'local_pmlog'));
         $mform->setDefault('exportcsv', 1);
 
-        $mform->addElement('submit', 'submitbutton', get_string('runpipeline', 'local_pmlog'));
+        $this->add_action_buttons(false, get_string('runpipeline', 'local_pmlog'));
     }
 
+    /**
+     * Validate the form data.
+     *
+     * @param array $data The submitted data.
+     * @param array $files The submitted files.
+     * @return array Errors.
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 

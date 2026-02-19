@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class transformer_basic {
 
+
     /**
      * Convert a raw log event into an activity label.
      *

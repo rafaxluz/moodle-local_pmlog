@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/clilib.php');
 use local_pmlog\local\pipeline_service;
 use local_pmlog\local\exporter_csv;
 
-list($options, $unrecognized) = cli_get_params([
+[$options, $unrecognized] = cli_get_params([
     'courseid' => null,
     'timestart' => 0,
     'timeend' => 0,
@@ -61,7 +61,8 @@ Options:
   -h, --help             Print out this help.
 
 Example:
-  php public/local/pmlog/cli/build_log.php --courseid=11 --clear=1 --studentonly=1 --dedup=1 --dedupwindow=30 --exportcsv=/tmp/course11.csv
+  php public/local/pmlog/cli/build_log.php --courseid=11 --clear=1 --studentonly=1" .
+  " --dedup=1 --dedupwindow=30 --exportcsv=/tmp/course11.csv
 ";
     echo $help;
     exit(0);

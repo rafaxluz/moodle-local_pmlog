@@ -26,10 +26,21 @@ namespace local_pmlog\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Label mapping utilities.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class labelmap {
+
     /**
      * Return a human-friendly activity label for a raw log row.
      * If no mapping matches, fallback to "action:target".
+     *
+     * @param \stdClass $raw The raw event object.
+     * @return string The human-friendly label.
      */
     public static function map(\stdClass $raw): string {
         $component = $raw->component ?? '';
@@ -47,7 +58,7 @@ class labelmap {
 
             'core|graded|user' => get_string('event_grade_given', 'local_pmlog'),
 
-            'mod_assign|viewed|course_module' => get_string('event_assign_status_view', 'local_pmlog'), // "Assignment open" usually maps to status view if not specific
+            'mod_assign|viewed|course_module' => get_string('event_assign_status_view', 'local_pmlog'), // "Assignment open" usually maps to status view if not specific.
             'mod_assign|viewed|submission_status' => get_string('event_assign_status_view', 'local_pmlog'),
             'mod_assign|viewed|submission_form' => get_string('event_assign_submission_form_view', 'local_pmlog'),
             'mod_assign|viewed|submission_confirmation_form' => get_string('event_assign_confirm_form_view', 'local_pmlog'),
@@ -113,6 +124,5 @@ class labelmap {
         }
 
         return get_string('unknown', 'local_pmlog');
-
     }
 }

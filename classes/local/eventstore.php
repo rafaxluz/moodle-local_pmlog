@@ -26,16 +26,31 @@ namespace local_pmlog\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Event store class.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class eventstore {
-    public function clear_course(int $courseid): void {
+    /**
+     * Clear all events for a specific course.
+     *
+     * @param int $courseid The course ID.
+     */
+    public function clear_course(int $courseid) {
         global $DB;
         $DB->delete_records('local_pmlog_events', ['courseid' => $courseid]);
     }
 
-    public function insert_many(array $rows): void {
+    /**
+     * Insert multiple event records.
+     *
+     * @param array $rows Array of event objects.
+     */
+    public function insert_many(array $rows) {
         global $DB;
-        foreach ($rows as $row) {
-            $DB->insert_record('local_pmlog_events', $row);
-        }
+        $DB->insert_records('local_pmlog_events', $rows);
     }
 }

@@ -67,7 +67,6 @@ class provider implements
      */
     public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
-        // The events are associated with a course, so we link to the course context.
         $sql = "SELECT c.id
                   FROM {context} c
                   JOIN {local_pmlog_events} e ON e.courseid = c.instanceid

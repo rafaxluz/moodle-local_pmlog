@@ -26,7 +26,22 @@ namespace local_pmlog\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Case builder class.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class casebuilder {
+
+    /**
+     * Build a case ID from user and course IDs.
+     *
+     * @param int $userid The user ID.
+     * @param int $courseid The course ID.
+     * @return string The case ID.
+     */
     public function build(int $userid, int $courseid): string {
         return "u{$userid}-c{$courseid}";
     }

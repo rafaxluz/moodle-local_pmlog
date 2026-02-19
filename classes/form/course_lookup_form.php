@@ -11,6 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
+// You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
@@ -27,11 +28,19 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
+/**
+ * Course lookup form class.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class course_lookup_form extends \moodleform {
 
+    /**
+     * Define the form.
+     */
     public function definition() {
-        $mform = $this->_form;
-
         $mform = $this->_form;
 
         $mform->addElement('header', 'lookup', get_string('courseid', 'local_pmlog'));

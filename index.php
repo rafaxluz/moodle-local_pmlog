@@ -63,10 +63,9 @@ if ($courseid > 0) {
     
     if ($csvname !== '' && $csvtime > 0) {
         $durl = new moodle_url('/local/pmlog/download.php', ['courseid' => $courseid]);
-        echo $OUTPUT->notification(
-            get_string('lastcsvexport', 'local_pmlog') . ': ' . userdate($csvtime) . ' — ' . s($csvname) . ' — ' . html_writer::link($durl, get_string('downloadcsv', 'local_pmlog')),
-            \core\output\notification::NOTIFY_INFO
-        );
+        $msg = get_string('lastcsvexport', 'local_pmlog') . ': ' . userdate($csvtime) . ' — ' . s($csvname) .
+               ' — ' . html_writer::link($durl, get_string('downloadcsv', 'local_pmlog'));
+        echo $OUTPUT->notification($msg, \core\output\notification::NOTIFY_INFO);
     } else if ($coursename) {
          echo $OUTPUT->notification(get_string('noeventsfound', 'local_pmlog'), \core\output\notification::NOTIFY_WARNING);
     } else {

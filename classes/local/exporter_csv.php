@@ -26,7 +26,22 @@ namespace local_pmlog\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * CSV Exporter class.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class exporter_csv {
+
+    /**
+     * Export course logs to CSV.
+     *
+     * @param int $courseid The course ID.
+     * @param string $filepath The path to save the CSV file.
+     * @throws \moodle_exception If the file cannot be opened.
+     */
     public function export_course(int $courseid, string $filepath): void {
         global $DB;
 
@@ -37,14 +52,18 @@ class exporter_csv {
 
         fputcsv($fh, ['caseid', 'activity', 'timestamp', 'userid', 'courseid', 'cmid', 'component', 'eventname', 'action', 'target']);
 
-        $rs = $DB->get_recordset('local_pmlog_events', ['courseid' => $courseid], 'caseid ASC, timecreated ASC',
-            'caseid, activity, timecreated, userid, courseid, cmid, component, eventname, action, target');
+        $rs = $DB->get_recordset(
+            'local_pmlog_events',
+            ['courseid' => $courseid],
+            'caseid ASC, timecreated ASC',
+            'caseid, activity, timecreated, userid, courseid, cmid, component, eventname, action, target'
+        );
 
         foreach ($rs as $rec) {
             fputcsv($fh, [
                 $rec->caseid,
                 $rec->activity,
-                gmdate('c', (int)$rec->timecreated), // ISO 8601
+                gmdate('c', (int)$rec->timecreated), // ISO 8601.
                 (int)$rec->userid,
                 (int)$rec->courseid,
                 $rec->cmid ?? '',

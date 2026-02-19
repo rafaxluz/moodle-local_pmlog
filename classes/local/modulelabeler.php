@@ -26,10 +26,20 @@ namespace local_pmlog\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Module labeler class.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class modulelabeler {
     /**
      * Given a cmid, return a specific "X open" label (Quiz open, Page open, ...)
      * or null if unknown.
+     *
+     * @param int|null $cmid The course module ID.
+     * @return string|null The specific label or null.
      */
     public function label_from_cmid(?int $cmid): ?string {
         global $DB;

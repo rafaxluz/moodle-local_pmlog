@@ -44,6 +44,42 @@ $string['buildrefreshlog'] = 'Build normalized log for this course';
 $string['exportcsv'] = 'Export CSV';
 $string['runpipeline'] = 'Run';
 $string['studenttimelines'] = 'Student timelines';
+
+$string['dedup_strict_cmid'] = 'Remove sequential CMID duplicates (Strict)';
+$string['sort_events_desc'] = 'Events (High-Low)';
+$string['sort_events_asc'] = 'Events (Low-High)';
+$string['sort_name_asc'] = 'Student Name (A-Z)';
+$string['sort_name_desc'] = 'Student Name (Z-A)';
+
+// Activity Types
+$string['activity_url'] = 'URL';
+$string['activity_page'] = 'Page';
+$string['activity_forum'] = 'Forum';
+$string['activity_assign'] = 'Assignment';
+$string['activity_quiz'] = 'Quiz';
+$string['activity_resource'] = 'File';
+$string['activity_folder'] = 'Folder';
+$string['activity_wiki'] = 'Wiki';
+$string['activity_chat'] = 'Chat';
+$string['activity_glossary'] = 'Glossary';
+$string['activity_lesson'] = 'Lesson';
+$string['activity_scorm'] = 'SCORM';
+$string['activity_workshop'] = 'Workshop';
+$string['activity_feedback'] = 'Feedback';
+$string['activity_choice'] = 'Choice';
+$string['activity_survey'] = 'Survey';
+$string['activity_lti'] = 'External Tool';
+$string['activity_h5p'] = 'H5P';
+
+// Verbs
+$string['verb_view'] = 'View';
+$string['verb_submission'] = 'Submission';
+$string['verb_grade'] = 'Grade';
+$string['verb_attempt'] = 'Attempt';
+$string['verb_update'] = 'Update';
+$string['verb_create'] = 'Create';
+$string['verb_delete'] = 'Delete';
+$string['verb_complete'] = 'Complete';
 $string['noeventsfound'] = 'No normalized events found yet for this course. Run the pipeline above first.';
 $string['thstudent'] = 'Student';
 $string['thevents'] = 'Events';
@@ -133,3 +169,9 @@ $string['verb_review'] = 'Review';
 $string['verb_grade'] = 'Grade';
 $string['verb_complete'] = 'Complete';
 $string['verb_do'] = 'Do';
+
+// Download Errors
+$string['error_csvnotfound'] = 'CSV not found. Run the pipeline with CSV export enabled first.';
+$string['error_csvmissing'] = 'CSV file missing on disk. Re-run the export.';
+$string['error_headerssent'] = 'Headers already sent in {$a->file} on line {$a->line}. Cannot download CSV safely.';
+$string['error_csvopenread'] = 'Could not open CSV for reading.';

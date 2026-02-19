@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.6] - 2026-02-19
+### Changed
+- Flattened the "Run pipeline" form by replacing the collapsible header with a simple HTML heading.
+- Refactored `classes/local/pipeline_service.php` to reduce method complexity (PHPMD fix).
+- Refactored `classes/local/cleaner_dedup.php` to reduce method complexity (PHPMD fix).
+- flexible `$options` array in `extractor_standardlog.php` (PHPMD fix).
+- Replaced hard-coded strings in `course.php`, `pipeline_form.php`, `download.php` and `modulelabeler.php` with `get_string`.
+
 ## [0.1.5] - 2026-02-19
 
 ### Added
