@@ -15,6 +15,7 @@ Key features:
 
 - **Moodle**: 3.8 or later.
 - **PHP**: 7.4 or later recommended.
+- **Dependencies**: None.
 
 ## Installation
 

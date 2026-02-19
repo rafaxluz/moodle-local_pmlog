@@ -79,7 +79,7 @@ class pipeline_form extends \moodleform {
         $mform->addElement('checkbox', 'exportcsv', get_string('exportcsv', 'local_pmlog'));
         $mform->setDefault('exportcsv', 1);
 
-        $this->add_action_buttons(false, get_string('runpipeline', 'local_pmlog'));
+        $mform->addElement('submit', 'submitbutton', get_string('runpipeline', 'local_pmlog'));
     }
 
     public function validation($data, $files) {
