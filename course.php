@@ -37,7 +37,22 @@ require_capability('local/pmlog:manage', $context);
 
 $course = get_course($courseid);
 
-$PAGE->set_url(new moodle_url('/local/pmlog/course.php', ['courseid' => $courseid]));
+$page    = optional_param('page', 0, PARAM_INT);
+$perpage = optional_param('perpage', 100, PARAM_INT);
+$sort    = optional_param('sort', 'events_desc', PARAM_ALPHANUMEXT);
+
+$url = new moodle_url('/local/pmlog/course.php', ['courseid' => $courseid]);
+if ($perpage !== 100) {
+    $url->param('perpage', $perpage);
+}
+if ($sort !== 'events_desc') {
+    $url->param('sort', $sort);
+}
+if ($queued) {
+    $url->param('queued', 1);
+}
+
+$PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_title(get_string('pluginname', 'local_pmlog'));
 $PAGE->set_heading(format_string($course->fullname));
@@ -109,29 +124,69 @@ echo html_writer::tag('h4', get_string('studenttimelines', 'local_pmlog'));
 
 global $DB;
 
+echo html_writer::start_div('d-flex mb-3 align-items-center gap-3');
+
+$sortoptions = [
+    'events_desc' => get_string('sortby', 'core') . ': ' . get_string('thevents', 'local_pmlog') . ' (' . get_string('desc', 'core') . ')',
+    'events_asc'  => get_string('sortby', 'core') . ': ' . get_string('thevents', 'local_pmlog') . ' (' . get_string('asc', 'core') . ')',
+    'name_asc'    => get_string('sortby', 'core') . ': ' . get_string('thstudent', 'local_pmlog') . ' (A-Z)',
+    'name_desc'   => get_string('sortby', 'core') . ': ' . get_string('thstudent', 'local_pmlog') . ' (Z-A)',
+];
+
+$sortselector = new single_select($url, 'sort', $sortoptions, $sort, null);
+$sortselector->set_label(get_string('sortby', 'core'));
+
+$options = [
+    20 => 20,
+    50 => 50,
+    100 => 100,
+    5000 => get_string('all', 'core'),
+];
+$pageselector = new single_select($url, 'perpage', $options, $perpage, null);
+$pageselector->set_label(get_string('perpage', 'moodle'));
+
+echo $OUTPUT->render($sortselector);
+echo $OUTPUT->render($pageselector);
+
+echo html_writer::end_div();
+
+$totalcount = $DB->count_records_sql("SELECT COUNT(DISTINCT userid) FROM {local_pmlog_events} WHERE courseid = ?", [$courseid]);
+
+$pagingbar = new paging_bar($totalcount, $page, $perpage, $url, 'page');
+echo $OUTPUT->render($pagingbar);
+
+switch ($sort) {
+    case 'events_asc':
+        $orderby = "n ASC, u.firstname ASC, u.lastname ASC";
+        break;
+    case 'name_asc':
+        $orderby = "u.firstname ASC, u.lastname ASC";
+        break;
+    case 'name_desc':
+        $orderby = "u.firstname DESC, u.lastname DESC";
+        break;
+    case 'events_desc':
+    default:
+        $orderby = "n DESC, u.firstname ASC, u.lastname ASC";
+        break;
+}
+
 $sql = "
-    SELECT e.userid, COUNT(*) AS n
+    SELECT e.userid, u.firstname, u.lastname, COUNT(e.id) AS n
       FROM {local_pmlog_events} e
+      JOIN {user} u ON u.id = e.userid
      WHERE e.courseid = :courseid
-     GROUP BY e.userid
-     ORDER BY n DESC
+     GROUP BY e.userid, u.firstname, u.lastname
+     ORDER BY $orderby
 ";
-$rows = $DB->get_records_sql($sql, ['courseid' => $courseid]);
+$rows = $DB->get_records_sql($sql, ['courseid' => $courseid], $page * $perpage, $perpage);
 
 if (!empty($rows)) {
-    $userids = array_map(fn($r) => (int)$r->userid, $rows);
-    list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'uid');
-    $users = $DB->get_records_select('user', "id $insql", $inparams, '', 'id, firstname, lastname');
-    $usersbyid = $users;
-
     $list = [];
     foreach ($rows as $r) {
         $uid = (int)$r->userid;
         $count = (int)$r->n;
-
-        $uname = isset($usersbyid[$uid])
-            ? fullname($usersbyid[$uid])
-            : get_string('user', 'local_pmlog') . " {$uid}";
+        $uname = fullname($r);
 
         $turl = new moodle_url('/local/pmlog/timeline.php', ['courseid' => $courseid, 'userid' => $uid]);
 
@@ -143,6 +198,8 @@ if (!empty($rows)) {
     }
     
     echo $OUTPUT->render_from_template('local_pmlog/course_page', ['students' => ['list' => $list]]);
+    
+    echo $OUTPUT->render($pagingbar);
 } else {
     echo $OUTPUT->notification(get_string('noeventsfound', 'local_pmlog'), \core\output\notification::NOTIFY_INFO);
 }

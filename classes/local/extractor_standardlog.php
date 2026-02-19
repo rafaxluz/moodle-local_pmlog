@@ -30,26 +30,60 @@ class extractor_standardlog {
     /**
      * @return array<int, \stdClass> raw events
      */
-    public function extract(int $courseid, int $timestart = 0, int $timeend = 0, array $userids = []): array {
+    public function extract(int $courseid, int $timestart = 0, int $timeend = 0, array $userids = [], bool $studentonly = false): array {
         global $DB;
 
+        // JOIN with user table to get user details and avoid separate lookups.
+        $sql = "SELECT l.*, u.firstname, u.lastname, u.email, u.idnumber
+                  FROM {logstore_standard_log} l
+                  JOIN {user} u ON l.userid = u.id
+                 WHERE l.courseid = :courseid";
+        
         $params = ['courseid' => $courseid];
-        $where = "courseid = :courseid";
 
         if ($timestart > 0) {
-            $where .= " AND timecreated >= :timestart";
+            $sql .= " AND l.timecreated >= :timestart";
             $params['timestart'] = $timestart;
         }
         if ($timeend > 0) {
-            $where .= " AND timecreated <= :timeend";
+            $sql .= " AND l.timecreated <= :timeend";
             $params['timeend'] = $timeend;
         }
+
         if (!empty($userids)) {
             list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'uid');
-            $where .= " AND userid $insql";
+            $sql .= " AND l.userid $insql";
             $params = array_merge($params, $inparams);
         }
 
-        return $DB->get_records_select('logstore_standard_log', $where, $params, 'timecreated ASC, id ASC');
+        if ($studentonly) {
+            // Filter students using a subquery on role assignments.
+            // We look for users with 'student' role in the course context.
+            $context = \context_course::instance($courseid, IGNORE_MISSING);
+            if (!$context) {
+                return [];
+            }
+            
+            // Get student role IDs.
+            $studentroles = $DB->get_records_select_menu('role', "shortname = ? OR archetype = ?", ['student', 'student'], '', 'id, id');
+            if (empty($studentroles)) {
+                 return []; // No student role defined?
+            }
+            list($rinsql, $rinparams) = $DB->get_in_or_equal(array_keys($studentroles), SQL_PARAMS_NAMED, 'rid');
+
+            $sql .= " AND EXISTS (
+                        SELECT 1
+                          FROM {role_assignments} ra
+                         WHERE ra.userid = l.userid
+                           AND ra.contextid = :contextid
+                           AND ra.roleid $rinsql
+                      )";
+            $params['contextid'] = $context->id;
+            $params = array_merge($params, $rinparams);
+        }
+
+        $sql .= " ORDER BY l.timecreated ASC, l.id ASC";
+
+        return $DB->get_records_sql($sql, $params);
     }
 }

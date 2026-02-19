@@ -59,23 +59,7 @@ class pipeline_service {
         $dedupwindow = (int)($options['dedupwindow'] ?? 30);
 
         $userids = [];
-        if ($studentonly) {
-            $userids = $this->userresolver->get_student_userids($courseid);
-            if (empty($userids)) {
-                if ($clear) {
-                    $this->store->clear_course($courseid);
-                }
-                return [
-                    'courseid' => $courseid,
-                    'raw_count' => 0,
-                    'stored_count' => 0,
-                    'skipped_count' => 0,
-                    'dedup_skipped' => 0,
-                    'studentonly' => true,
-                    'note' => 'No student users found for course context (role shortname/archetype).',
-                ];
-            }
-        } else {
+        if (!$studentonly) {
             $userids = (array)($options['userids'] ?? []);
         }
 
@@ -83,7 +67,7 @@ class pipeline_service {
             $this->store->clear_course($courseid);
         }
 
-        $raw = $this->extractor->extract($courseid, $timestart, $timeend, $userids);
+        $raw = $this->extractor->extract($courseid, $timestart, $timeend, $userids, $studentonly);
 
         $rows = [];
         $skipped = 0;
@@ -94,12 +78,7 @@ class pipeline_service {
                 continue;
             }
 
-            if ($studentonly) {
-                if (!$this->userresolver->is_student_in_course($courseid, (int)$e->userid)) {
-                    $skipped++;
-                    continue;
-                }
-            }
+            // Student filtering is now done in SQL via extract().
 
             if ($studentonly && isset($e->action) && $e->action === 'graded') {
                 $skipped++;

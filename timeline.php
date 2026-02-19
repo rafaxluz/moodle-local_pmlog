@@ -29,8 +29,15 @@ require_capability('local/pmlog:manage', context_system::instance());
 
 $courseid = required_param('courseid', PARAM_INT);
 $userid   = required_param('userid', PARAM_INT);
+$page     = optional_param('page', 0, PARAM_INT);
+$perpage = optional_param('perpage', 100, PARAM_INT);
 
-$PAGE->set_url(new moodle_url('/local/pmlog/timeline.php', ['courseid' => $courseid, 'userid' => $userid]));
+$url = new moodle_url('/local/pmlog/timeline.php', ['courseid' => $courseid, 'userid' => $userid]);
+if ($perpage !== 100) {
+    $url->param('perpage', $perpage);
+}
+
+$PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
 $PAGE->set_title('Student timeline');
 $PAGE->set_heading('Student timeline');
@@ -44,6 +51,22 @@ $course = $DB->get_record('course', ['id' => $courseid], 'id, fullname, shortnam
 
 $modinfo = get_fast_modinfo($courseid);
 
+$options = [
+    20 => 20,
+    50 => 50,
+    100 => 100,
+    5000 => get_string('all', 'core'),
+];
+$selector = new single_select($url, 'perpage', $options, $perpage, null);
+$selector->set_label(get_string('perpage', 'moodle')); // 'Items per page'
+
+echo html_writer::div($OUTPUT->render($selector), 'mb-3');
+
+$totalcount = $DB->count_records('local_pmlog_events', ['courseid' => $courseid, 'userid' => $userid]);
+
+$pagingbar = new paging_bar($totalcount, $page, $perpage, $url, 'page');
+echo $OUTPUT->render($pagingbar);
+
 $sql = "
     SELECT id, activity, timecreated, cmid
       FROM {local_pmlog_events}
@@ -53,14 +76,14 @@ $sql = "
 ";
 $params = ['courseid' => $courseid, 'userid' => $userid];
 
-$rs = $DB->get_recordset_sql($sql, $params);
+$records = $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
 
 $timelinewindow = 600;
 $lastshown = [];
 
 $events = [];
 
-foreach ($rs as $e) {
+foreach ($records as $e) {
     $t = userdate((int)$e->timecreated);
     $label = s($e->activity);
 
@@ -92,14 +115,13 @@ foreach ($rs as $e) {
         'suffix' => $suffix
     ];
 }
-$rs->close();
 
-$data = [
+echo $OUTPUT->render_from_template('local_pmlog/timeline_page', [
     'userfullname' => fullname($user),
     'coursename' => format_string($course->fullname),
     'events' => $events
-];
+]);
 
-echo $OUTPUT->render_from_template('local_pmlog/timeline_page', $data);
+echo $OUTPUT->render($pagingbar);
 
 echo $OUTPUT->footer();
