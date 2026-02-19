@@ -78,8 +78,6 @@ class pipeline_service {
                 continue;
             }
 
-            // Student filtering is now done in SQL via extract().
-
             if ($studentonly && isset($e->action) && $e->action === 'graded') {
                 $skipped++;
                 continue;
@@ -125,7 +123,6 @@ class pipeline_service {
         if ($dedup) {
             $rows = $this->cleaner->dedup_sequential($rows, $dedupwindow);
             
-            // New strict deduplication: remove sequential CMID repetitions
             if ($dedupStrictCmid) {
                 $rows = $this->cleaner->dedup_strict_cmid($rows);
             }
