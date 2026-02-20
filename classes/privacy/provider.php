@@ -24,8 +24,6 @@
 
 namespace local_pmlog\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\approved_contextlist;
@@ -38,7 +36,6 @@ use core_privacy\local\request\transform;
 class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\request\plugin\provider {
-
     /**
      * Returns metadata about the data handled by this plugin.
      *
@@ -72,12 +69,12 @@ class provider implements
                   JOIN {local_pmlog_events} e ON e.courseid = c.instanceid
                  WHERE c.contextlevel = :contextlevel
                    AND e.userid = :userid";
-        
+
         $contextlist->add_from_sql($sql, [
             'contextlevel' => CONTEXT_COURSE,
-            'userid' => $userid
+            'userid' => $userid,
         ]);
-        
+
         return $contextlist;
     }
 
@@ -94,7 +91,7 @@ class provider implements
         }
 
         $user = $contextlist->get_user();
-        
+
         foreach ($contextlist->get_contexts() as $context) {
             if ($context->contextlevel != CONTEXT_COURSE) {
                 continue;
@@ -102,7 +99,7 @@ class provider implements
 
             $currentdata = $DB->get_records('local_pmlog_events', [
                 'courseid' => $context->instanceid,
-                'userid' => $user->id
+                'userid' => $user->id,
             ]);
 
             if (empty($currentdata)) {
@@ -162,7 +159,7 @@ class provider implements
 
             $DB->delete_records('local_pmlog_events', [
                 'courseid' => $context->instanceid,
-                'userid' => $userid
+                'userid' => $userid,
             ]);
         }
     }

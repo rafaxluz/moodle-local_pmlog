@@ -27,7 +27,7 @@ define('CLI_SCRIPT', true);
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
 
-list($options, $unrecognized) = cli_get_params([
+[$options, $unrecognized] = cli_get_params([
     'courseid' => null,
     'help' => false,
 ], ['h' => 'help']);
@@ -54,7 +54,9 @@ echo "Enrolled users count: " . count($enrolled) . "\n";
 $ids = [];
 foreach ($enrolled as $u) {
     $ids[] = (int)$u->id;
-    if (count($ids) >= 10) break;
+    if (count($ids) >= 10) {
+        break;
+    }
 }
 echo "Sample enrolled userids: " . implode(', ', $ids) . "\n";
 

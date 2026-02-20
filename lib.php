@@ -22,8 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Add a link to the course navigation menu.
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param stdClass $course The course object
+ * @param context_course $context The context of the course
+ */
 function local_pmlog_extend_navigation_course($navigation, $course, $context) {
     if (empty($course) || empty($context)) {
         return;

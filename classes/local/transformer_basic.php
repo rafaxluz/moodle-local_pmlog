@@ -24,14 +24,11 @@
 
 namespace local_pmlog\local;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Basic transformer: converts raw Moodle log events
  * into human-friendly activity labels and extracts minimal metadata.
  */
 class transformer_basic {
-
     /**
      * Convert a raw log event into an activity label.
      *

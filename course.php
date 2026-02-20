@@ -91,10 +91,9 @@ $csvtime = (int)get_config('local_pmlog', 'last_csv_time_course_' . $courseid);
 
 if ($csvname !== '' && $csvtime > 0) {
     $durl = new moodle_url('/local/pmlog/download.php', ['courseid' => $courseid]);
-    echo $OUTPUT->notification(
-        get_string('lastcsvexport', 'local_pmlog') . ': ' . userdate($csvtime) . ' — ' . s($csvname) . ' — ' . html_writer::link($durl, get_string('downloadcsv', 'local_pmlog')),
-        \core\output\notification::NOTIFY_INFO
-    );
+    $msg = get_string('lastcsvexport', 'local_pmlog') . ': ' . userdate($csvtime) . ' — ' . s($csvname) .
+       ' — ' . html_writer::link($durl, get_string('downloadcsv', 'local_pmlog'));
+    echo $OUTPUT->notification($msg, \core\output\notification::NOTIFY_INFO);
 }
 
 $lastcourse = (int)get_config('local_pmlog', 'last_run_courseid');
@@ -104,10 +103,9 @@ if ($lastcourse === (int)$courseid) {
         $raw = (int)get_config('local_pmlog', 'last_run_raw');
         $stored = (int)get_config('local_pmlog', 'last_run_stored');
         $skipped = (int)get_config('local_pmlog', 'last_run_skipped');
-        echo $OUTPUT->notification(
-            get_string('lastrun', 'local_pmlog') . ': ' . userdate($lastrun) . " | Raw: {$raw} | Stored: {$stored} | Skipped: {$skipped}",
-            \core\output\notification::NOTIFY_SUCCESS
-        );
+        $msg = get_string('lastrun', 'local_pmlog') . ': ' . userdate($lastrun) .
+               " | Raw: {$raw} | Stored: {$stored} | Skipped: {$skipped}";
+        echo $OUTPUT->notification($msg, \core\output\notification::NOTIFY_SUCCESS);
     }
 }
 
@@ -196,9 +194,9 @@ if (!empty($rows)) {
             'timelineurl' => $turl->out(false),
         ];
     }
-    
+
     echo $OUTPUT->render_from_template('local_pmlog/course_page', ['students' => ['list' => $list]]);
-    
+
     echo $OUTPUT->render($pagingbar);
 } else {
     echo $OUTPUT->notification(get_string('noeventsfound', 'local_pmlog'), \core\output\notification::NOTIFY_INFO);

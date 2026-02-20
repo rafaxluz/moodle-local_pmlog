@@ -17,6 +17,21 @@
     @package    local_pmlog
     @copyright  2026 rafaxluz
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    @template local_pmlog/course_page
+
+    Example context (json):
+    {
+        "students": {
+            "list": [
+                {
+                    "name": "Jane User",
+                    "count": 42,
+                    "timelineurl": "http://localhost/local/pmlog/timeline.php?userid=2&courseid=3"
+                }
+            ]
+        }
+    }
 }}
 {{^students}}
     <div class="alert alert-info">{{#str}} noeventsfound, local_pmlog {{/str}}</div>
