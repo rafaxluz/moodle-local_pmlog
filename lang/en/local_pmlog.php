@@ -44,6 +44,7 @@ $string['buildrefreshlog'] = 'Build normalized log for this course';
 $string['exportcsv'] = 'Export CSV';
 $string['runpipeline'] = 'Run';
 $string['studenttimelines'] = 'Student timelines';
+$string['studenttimeline'] = 'Student timeline';
 
 $string['dedup_strict_cmid'] = 'Remove sequential CMID duplicates (Strict)';
 $string['sort_events_desc'] = 'Events (High-Low)';
@@ -51,7 +52,7 @@ $string['sort_events_asc'] = 'Events (Low-High)';
 $string['sort_name_asc'] = 'Student Name (A-Z)';
 $string['sort_name_desc'] = 'Student Name (Z-A)';
 
-// Activity Types
+// Activity Types.
 $string['activity_url'] = 'URL';
 $string['activity_page'] = 'Page';
 $string['activity_forum'] = 'Forum';
@@ -71,7 +72,7 @@ $string['activity_survey'] = 'Survey';
 $string['activity_lti'] = 'External Tool';
 $string['activity_h5p'] = 'H5P';
 
-// Verbs
+// Verbs.
 $string['verb_view'] = 'View';
 $string['verb_submission'] = 'Submission';
 $string['verb_grade'] = 'Grade';
@@ -94,12 +95,12 @@ $string['privacy:metadata:local_pmlog_events:courseid'] = 'The ID of the course 
 $string['privacy:metadata:local_pmlog_events:eventname'] = 'The name of the event.';
 $string['privacy:metadata:local_pmlog_events:timecreated'] = 'The time when the event occurred.';
 
-// Index Page
+// Index Page.
 $string['raw'] = 'Raw';
 $string['stored'] = 'Stored';
 $string['skipped'] = 'Skipped';
 
-// Activity Groups
+// Activity Groups.
 $string['group_quiz'] = 'Quiz';
 $string['group_assignment'] = 'Assignment';
 $string['group_forum'] = 'Forum';
@@ -108,10 +109,10 @@ $string['group_content'] = 'Content';
 $string['group_progress'] = 'Progress';
 $string['group_other'] = 'Other';
 
-// Timeline
+// Timeline.
 $string['noeventsstudent'] = 'No events found for this student in this course.';
 
-// Module Labels
+// Module Labels.
 $string['activity_quiz_open'] = 'Quiz open';
 $string['activity_page_open'] = 'Page open';
 $string['activity_url_open'] = 'URL open';
@@ -129,7 +130,7 @@ $string['activity_scorm_open'] = 'SCORM open';
 $string['activity_h5pactivity_open'] = 'H5P open';
 $string['activity_generic_open'] = '{$a} open';
 
-// Label Map (Specific events)
+// Label Map (Specific events).
 $string['event_course_view'] = 'Course view';
 $string['event_activity_resource_open'] = 'Open activity/resource';
 $string['event_page_view'] = 'View page content';
@@ -152,7 +153,7 @@ $string['event_forum_discussion_create'] = 'Forum discussion create';
 $string['event_forum_post_create'] = 'Forum post create';
 $string['unknown'] = 'Unknown';
 
-// Verbs for dynamic mapping
+// Verbs for dynamic mapping.
 $string['verb_view'] = 'View';
 $string['verb_start'] = 'Start';
 $string['verb_resume'] = 'Resume';
@@ -170,7 +171,7 @@ $string['verb_grade'] = 'Grade';
 $string['verb_complete'] = 'Complete';
 $string['verb_do'] = 'Do';
 
-// Download Errors
+// Download Errors.
 $string['error_csvnotfound'] = 'CSV not found. Run the pipeline with CSV export enabled first.';
 $string['error_csvmissing'] = 'CSV file missing on disk. Re-run the export.';
 $string['error_headerssent'] = 'Headers already sent in {$a->file} on line {$a->line}. Cannot download CSV safely.';

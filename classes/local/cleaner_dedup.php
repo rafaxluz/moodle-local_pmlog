@@ -24,54 +24,51 @@
 
 namespace local_pmlog\local;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Cleaner deduplicator class.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class cleaner_dedup {
-
     /**
      * Generic sequential dedup: same caseid + same activity + same cmid within window.
      *
      * @param \stdClass[] $rows
+     * @param int $windowseconds
      * @return \stdClass[]
      */
-	/**
-	 * Key-window dedup:
-	 * For each caseid, skip events with same (activity + cmid) that occur within the window,
-	 * even if they are not consecutive.
-	 *
-	 * @param \stdClass[] $rows
-	 * @return \stdClass[]
-	 */
-	public function dedup_sequential(array $rows, int $windowseconds = 30): array {
-		$out = [];
+    public function dedup_sequential(array $rows, int $windowseconds = 30): array {
+        $out = [];
 
-		$lastseen = [];
+        $lastseen = [];
 
-		foreach ($rows as $row) {
-			$caseid = (string)$row->caseid;
-			$activity = (string)$row->activity;
-			$cmid = isset($row->cmid) ? (int)$row->cmid : 0;
-			$t = (int)$row->timecreated;
+        foreach ($rows as $row) {
+            $caseid = (string)$row->caseid;
+            $activity = (string)$row->activity;
+            $cmid = isset($row->cmid) ? (int)$row->cmid : 0;
+            $t = (int)$row->timecreated;
 
-			if (!isset($lastseen[$caseid])) {
-				$lastseen[$caseid] = [];
-			}
+            if (!isset($lastseen[$caseid])) {
+                $lastseen[$caseid] = [];
+            }
 
-			$key = $activity . '|' . $cmid;
+            $key = $activity . '|' . $cmid;
 
-			if (isset($lastseen[$caseid][$key])) {
-				$lastt = (int)$lastseen[$caseid][$key];
-				if (($t - $lastt) <= $windowseconds) {
-					continue;
-				}
-			}
+            if (isset($lastseen[$caseid][$key])) {
+                $lastt = (int)$lastseen[$caseid][$key];
+                if (($t - $lastt) <= $windowseconds) {
+                    continue;
+                }
+            }
 
-			$lastseen[$caseid][$key] = $t;
-			$out[] = $row;
-		}
+            $lastseen[$caseid][$key] = $t;
+            $out[] = $row;
+        }
 
-		return $out;
-	}
+        return $out;
+    }
 
     /**
      * Strict CMID Deduplication:
@@ -90,19 +87,19 @@ class cleaner_dedup {
             $caseid = (string)$row->caseid;
             $cmid = isset($row->cmid) ? (int)$row->cmid : 0;
 
-            // If it's not a module event, keep it and reset memory for this case
+            // If it's not a module event, keep it and reset memory for this case.
             if ($cmid <= 0) {
                 $lastcmidv[$caseid] = 0;
                 $out[] = $row;
                 continue;
             }
 
-            // If it matches the immediately preceding CMID for this case, skip it
+            // If it matches the immediately preceding CMID for this case, skip it.
             if (isset($lastcmidv[$caseid]) && $lastcmidv[$caseid] === $cmid) {
                 continue;
             }
 
-            // New CMID, keep it
+            // New CMID, keep it.
             $lastcmidv[$caseid] = $cmid;
             $out[] = $row;
         }
@@ -113,17 +110,17 @@ class cleaner_dedup {
 
     /**
      * Navigation collapse:
-     * - "Course view": keep at most 1 per session window per case
-     * - "View course module": keep at most 1 per (cmid) per window per case
+     * - "Course view": keep at most 1 per session window per case.
+     * - "View course module": keep at most 1 per (cmid) per window per case.
      *
      * @param \stdClass[] $rows
+     * @param int $courseviewwindow Seconds for course view window.
+     * @param int $moduleviewwindow Seconds for module view window.
      * @return \stdClass[]
      */
     public function collapse_navigation(array $rows, int $courseviewwindow = 1800, int $moduleviewwindow = 600): array {
         $out = [];
-
         $lastcourseview = [];
-
         $lastmoduleview = [];
 
         foreach ($rows as $row) {
@@ -132,30 +129,13 @@ class cleaner_dedup {
             $t = (int)$row->timecreated;
             $cmid = isset($row->cmid) ? (int)$row->cmid : 0;
 
-            if ($activity === 'Course view') {
-                $lastt = $lastcourseview[$caseid] ?? null;
-                if ($lastt !== null && ($t - (int)$lastt) <= $courseviewwindow) {
-                    continue;
-                }
-                $lastcourseview[$caseid] = $t;
-                $out[] = $row;
+            if ($this->should_collapse_course_view($activity, $caseid, $t, $courseviewwindow, $lastcourseview)) {
                 continue;
             }
 
-            if ($activity === 'View course module') {
-                if (!isset($lastmoduleview[$caseid])) {
-                    $lastmoduleview[$caseid] = [];
-                }
-
-                $key = $cmid > 0 ? (string)$cmid : '_nocmid';
-                $lastt = $lastmoduleview[$caseid][$key] ?? null;
-
-                if ($lastt !== null && ($t - (int)$lastt) <= $moduleviewwindow) {
-                    continue;
-                }
-
-                $lastmoduleview[$caseid][$key] = $t;
-                $out[] = $row;
+            // Reference passed by value here, assuming lastmoduleview is updated internally if passed by ref in signature.
+            // Wait, the property logic is inside the method.
+            if ($this->should_collapse_module_view($activity, $caseid, $t, $cmid, $moduleviewwindow, $lastmoduleview)) {
                 continue;
             }
 
@@ -163,5 +143,73 @@ class cleaner_dedup {
         }
 
         return $out;
+    }
+
+    /**
+     * Check if a course view event should be collapsed.
+     *
+     * @param string $activity Activity name.
+     * @param string $caseid Case ID.
+     * @param int $t Timestamp.
+     * @param int $window Window size in seconds.
+     * @param array $lastcourseview Reference to last course view array.
+     * @return bool True if should be collapsed.
+     */
+    private function should_collapse_course_view(
+        string $activity,
+        string $caseid,
+        int $t,
+        int $window,
+        array &$lastcourseview
+    ): bool {
+        if ($activity !== 'Course view') {
+            return false;
+        }
+
+        $lastt = $lastcourseview[$caseid] ?? null;
+        if ($lastt !== null && ($t - (int)$lastt) <= $window) {
+            return true;
+        }
+
+        $lastcourseview[$caseid] = $t;
+        return false;
+    }
+
+    /**
+     * Check if a module view event should be collapsed.
+     *
+     * @param string $activity Activity name.
+     * @param string $caseid Case ID.
+     * @param int $t Timestamp.
+     * @param int $cmid Course module ID.
+     * @param int $window Window size in seconds.
+     * @param array $lastmoduleview Reference to last module view array.
+     * @return bool True if should be collapsed.
+     */
+    private function should_collapse_module_view(
+        string $activity,
+        string $caseid,
+        int $t,
+        int $cmid,
+        int $window,
+        array &$lastmoduleview
+    ): bool {
+        if ($activity !== 'View course module') {
+            return false;
+        }
+
+        if (!isset($lastmoduleview[$caseid])) {
+            $lastmoduleview[$caseid] = [];
+        }
+
+        $key = $cmid > 0 ? (string)$cmid : '_nocmid';
+        $lastt = $lastmoduleview[$caseid][$key] ?? null;
+
+        if ($lastt !== null && ($t - (int)$lastt) <= $window) {
+            return true;
+        }
+
+        $lastmoduleview[$caseid][$key] = $t;
+        return false;
     }
 }

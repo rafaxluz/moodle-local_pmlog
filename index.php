@@ -44,11 +44,11 @@ if ($formdata = $mform->get_data()) {
 
 if ($courseid > 0) {
     $mform->set_data(['courseid' => $courseid]);
-    
+
     $course = $DB->get_record('course', ['id' => $courseid]);
     if ($course) {
         $coursename = format_string($course->fullname);
-        
+
         $csvname = (string)get_config('local_pmlog', 'last_csv_course_' . $courseid);
         $csvtime = (int)get_config('local_pmlog', 'last_csv_time_course_' . $courseid);
     }
@@ -60,13 +60,12 @@ $mform->display();
 
 if ($courseid > 0) {
     echo html_writer::tag('h3', get_string('course', 'core') . ': ' . $coursename);
-    
+
     if ($csvname !== '' && $csvtime > 0) {
         $durl = new moodle_url('/local/pmlog/download.php', ['courseid' => $courseid]);
-        echo $OUTPUT->notification(
-            get_string('lastcsvexport', 'local_pmlog') . ': ' . userdate($csvtime) . ' — ' . s($csvname) . ' — ' . html_writer::link($durl, get_string('downloadcsv', 'local_pmlog')),
-            \core\output\notification::NOTIFY_INFO
-        );
+        $msg = get_string('lastcsvexport', 'local_pmlog') . ': ' . userdate($csvtime) . ' — ' . s($csvname) .
+               ' — ' . html_writer::link($durl, get_string('downloadcsv', 'local_pmlog'));
+        echo $OUTPUT->notification($msg, \core\output\notification::NOTIFY_INFO);
     } else if ($coursename) {
          echo $OUTPUT->notification(get_string('noeventsfound', 'local_pmlog'), \core\output\notification::NOTIFY_WARNING);
     } else {

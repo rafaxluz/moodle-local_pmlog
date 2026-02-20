@@ -24,12 +24,19 @@
 
 namespace local_pmlog\local;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Activity group mapping.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class activitygroupmap {
-
     /**
      * Map a detailed activity label to a coarse activity group.
+     *
+     * @param string $activity The activity name/label.
+     * @return string The mapped group name.
      */
     public static function group(string $activity): string {
         $a = strtolower($activity);

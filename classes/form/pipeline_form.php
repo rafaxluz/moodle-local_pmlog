@@ -11,6 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
+// You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
@@ -25,10 +26,20 @@ namespace local_pmlog\form;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->libdir . '/formslib.php');
 
+/**
+ * Pipeline form class.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class pipeline_form extends \moodleform {
-
+    /**
+     * Define the form.
+     */
     public function definition() {
         $mform = $this->_form;
 
@@ -49,7 +60,7 @@ class pipeline_form extends \moodleform {
         }
 
         $mform->addElement('date_selector', 'timestart', get_string('startdate', 'local_pmlog'), ['optional' => true]);
-        
+
         $mform->addElement('date_selector', 'timeend', get_string('enddate', 'local_pmlog'), ['optional' => true]);
 
         $mform->addElement('checkbox', 'studentonly', get_string('onlystudents', 'local_pmlog'));
@@ -82,6 +93,13 @@ class pipeline_form extends \moodleform {
         $this->add_action_buttons(false, get_string('runpipeline', 'local_pmlog'));
     }
 
+    /**
+     * Validate the form data.
+     *
+     * @param array $data The submitted data.
+     * @param array $files The submitted files.
+     * @return array Errors.
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 

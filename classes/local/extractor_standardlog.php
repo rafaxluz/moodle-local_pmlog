@@ -24,21 +24,34 @@
 
 namespace local_pmlog\local;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Extractor for standard log.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class extractor_standardlog {
     /**
-     * @return array<int, \stdClass> raw events
+     * Extract raw event data from the standard log.
+     *
+     * @param int $courseid The course ID.
+     * @param int $timestart Optional start timestamp.
+     * @param int $timeend Optional end timestamp.
+     * @param array $userids Optional list of user IDs to filter by.
+     * @param array $options Additional options (e.g. 'studentonly').
+     * @return array<int, \stdClass> Raw events.
      */
-    public function extract(int $courseid, int $timestart = 0, int $timeend = 0, array $userids = [], bool $studentonly = false): array {
+    public function extract(int $courseid, int $timestart = 0, int $timeend = 0, array $userids = [], array $options = []): array {
         global $DB;
 
-        // JOIN with user table to get user details and avoid separate lookups.
+        $studentonly = !empty($options['studentonly']);
+
         $sql = "SELECT l.*, u.firstname, u.lastname, u.email, u.idnumber
                   FROM {logstore_standard_log} l
                   JOIN {user} u ON l.userid = u.id
                  WHERE l.courseid = :courseid";
-        
+
         $params = ['courseid' => $courseid];
 
         if ($timestart > 0) {
@@ -51,7 +64,7 @@ class extractor_standardlog {
         }
 
         if (!empty($userids)) {
-            list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'uid');
+            [$insql, $inparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'uid');
             $sql .= " AND l.userid $insql";
             $params = array_merge($params, $inparams);
         }
@@ -61,12 +74,18 @@ class extractor_standardlog {
             if (!$context) {
                 return [];
             }
-            
-            $studentroles = $DB->get_records_select_menu('role', "shortname = ? OR archetype = ?", ['student', 'student'], '', 'id, id');
+
+            $studentroles = $DB->get_records_select_menu(
+                'role',
+                "shortname = ? OR archetype = ?",
+                ['student', 'student'],
+                '',
+                'id, id'
+            );
             if (empty($studentroles)) {
                  return [];
             }
-            list($rinsql, $rinparams) = $DB->get_in_or_equal(array_keys($studentroles), SQL_PARAMS_NAMED, 'rid');
+            [$rinsql, $rinparams] = $DB->get_in_or_equal(array_keys($studentroles), SQL_PARAMS_NAMED, 'rid');
 
             $sql .= " AND EXISTS (
                         SELECT 1

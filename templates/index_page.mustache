@@ -17,6 +17,21 @@
     @package    local_pmlog
     @copyright  2026 rafaxluz
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    @template local_pmlog/index_page
+
+    Example context (json):
+    {
+        "results": [
+            {
+                "raw_count": 100,
+                "stored_count": 80,
+                "skipped_count": 20,
+                "dedup_skipped": 5,
+                "note": "Processing complete"
+            }
+        ]
+    }
 }}
 <h3>{{#str}} buildnormalizedlog, local_pmlog {{/str}}</h3>
 

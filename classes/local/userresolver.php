@@ -24,13 +24,19 @@
 
 namespace local_pmlog\local;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * User resolver class.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class userresolver {
     /**
      * Get enrolled users in the course that have the "student" role (shortname) in the course context
      * (including roles inherited from parent contexts).
      *
+     * @param int $courseid The course ID.
      * @return int[] userids
      */
     public function get_student_userids(int $courseid): array {
@@ -70,6 +76,13 @@ class userresolver {
         return array_values(array_unique($ids));
     }
 
+    /**
+     * Check if a user is a student in a course.
+     *
+     * @param int $courseid The course ID.
+     * @param int $userid The user ID.
+     * @return bool True if the user is a student, false otherwise.
+     */
     public function is_student_in_course(int $courseid, int $userid): bool {
         global $DB;
 
@@ -98,5 +111,4 @@ class userresolver {
         }
         return false;
     }
-
 }

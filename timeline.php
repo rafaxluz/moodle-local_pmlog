@@ -112,14 +112,17 @@ foreach ($records as $e) {
     $events[] = [
         'time' => $t,
         'label' => $label,
-        'suffix' => $suffix
+        'suffix' => $suffix,
     ];
 }
+
+$backurl = new moodle_url('/local/pmlog/course.php', ['courseid' => $courseid]);
 
 echo $OUTPUT->render_from_template('local_pmlog/timeline_page', [
     'userfullname' => fullname($user),
     'coursename' => format_string($course->fullname),
-    'events' => $events
+    'backurl' => $backurl->out(false),
+    'events' => $events,
 ]);
 
 echo $OUTPUT->render($pagingbar);

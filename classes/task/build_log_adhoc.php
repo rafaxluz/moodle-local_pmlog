@@ -24,14 +24,21 @@
 
 namespace local_pmlog\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core\task\adhoc_task;
 use local_pmlog\local\pipeline_service;
 use local_pmlog\local\exporter_csv;
 
+/**
+ * Adhoc task for log building.
+ *
+ * @package    local_pmlog
+ * @copyright  2026 rafaxluz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class build_log_adhoc extends adhoc_task {
-
+    /**
+     * Execute the task.
+     */
     public function execute() {
         global $CFG;
 
@@ -44,7 +51,6 @@ class build_log_adhoc extends adhoc_task {
 
         $options = [
             'clear' => true,
-            'studentonly' => !empty($data->studentonly),
             'studentonly' => !empty($data->studentonly),
             'dedup' => !empty($data->dedup),
             'dedup_strict_cmid' => !empty($data->dedup_strict_cmid),
