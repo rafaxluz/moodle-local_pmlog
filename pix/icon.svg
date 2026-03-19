@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" role="img" aria-label="Tracewise">
+  <defs>
+    <style>
+      .a{fill:#eb1f1f}
+      .b{fill:#ffffff}
+    </style>
+  </defs>
+  <rect class="a" x="3" y="3" width="30" height="30" rx="6"/>
+  <!-- timeline dots -->
+  <circle class="b" cx="11" cy="12" r="2"/>
+  <circle class="b" cx="11" cy="18" r="2"/>
+  <circle class="b" cx="11" cy="24" r="2"/>
+  <!-- timeline line -->
+  <rect class="b" x="10.4" y="14" width="1.2" height="8" rx="0.6"/>
+  <!-- small "flow" bars -->
+  <rect class="b" x="15" y="11" width="12" height="2" rx="1"/>
+  <rect class="b" x="15" y="17" width="12" height="2" rx="1"/>
+  <rect class="b" x="15" y="23" width="12" height="2" rx="1"/>
+</svg>
