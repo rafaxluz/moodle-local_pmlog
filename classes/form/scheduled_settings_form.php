@@ -57,12 +57,9 @@ class scheduled_settings_form extends \moodleform {
         );
         $mform->addHelpButton('schedulecourseids', 'schedulecourses', 'local_pmlog');
 
-        $caseidoptions = [
-            casebuilder::STRATEGY_USER_COURSE => get_string('caseidstrategy_user_course', 'local_pmlog'),
-            casebuilder::STRATEGY_USER_DAY => get_string('caseidstrategy_user_day', 'local_pmlog'),
-            casebuilder::STRATEGY_USER_COURSE_DAY => get_string('caseidstrategy_user_course_day', 'local_pmlog'),
-        ];
-        $mform->addElement('select', 'schedulecaseidstrategy', get_string('caseidstrategy', 'local_pmlog'), $caseidoptions);
+        $mform->addElement('hidden', 'schedulecaseidstrategy', casebuilder::STRATEGY_USER_COURSE);
+        $mform->setType('schedulecaseidstrategy', PARAM_ALPHAEXT);
+        $mform->setDefault('schedulecaseidstrategy', casebuilder::STRATEGY_USER_COURSE);
 
         $mform->addElement('advcheckbox', 'schedulestudentonly', get_string('onlystudents', 'local_pmlog'));
         $mform->addElement('advcheckbox', 'schedulededup', get_string('dedup', 'local_pmlog'));
@@ -84,12 +81,14 @@ class scheduled_settings_form extends \moodleform {
             '',
             get_string('standard', 'local_pmlog')
         );
+        $csvgroup[] = &$mform->createElement('static', 'scheduleexportcsvspacer1', '', '&nbsp;&nbsp;&nbsp;');
         $csvgroup[] = &$mform->createElement(
             'advcheckbox',
             'scheduleexportcsvdetailed',
             '',
             get_string('detailed', 'local_pmlog')
         );
+        $csvgroup[] = &$mform->createElement('static', 'scheduleexportcsvspacer2', '', '&nbsp;&nbsp;&nbsp;');
         $csvgroup[] = &$mform->createElement(
             'advcheckbox',
             'scheduleexportcsvnamed',
@@ -100,9 +99,12 @@ class scheduled_settings_form extends \moodleform {
             $csvgroup,
             'scheduleexportcsvgroup',
             get_string('exportcsv', 'local_pmlog'),
-            [' '],
+            [''],
             false
         );
+        $mform->setDefault('scheduleexportcsv', 0);
+        $mform->setDefault('scheduleexportcsvdetailed', 0);
+        $mform->setDefault('scheduleexportcsvnamed', 0);
 
         $xesgroup = [];
         $xesgroup[] = &$mform->createElement(
@@ -111,12 +113,14 @@ class scheduled_settings_form extends \moodleform {
             '',
             get_string('standard', 'local_pmlog')
         );
+        $xesgroup[] = &$mform->createElement('static', 'scheduleexportxesspacer1', '', '&nbsp;&nbsp;&nbsp;');
         $xesgroup[] = &$mform->createElement(
             'advcheckbox',
             'scheduleexportxesdetailed',
             '',
             get_string('detailed', 'local_pmlog')
         );
+        $xesgroup[] = &$mform->createElement('static', 'scheduleexportxesspacer2', '', '&nbsp;&nbsp;&nbsp;');
         $xesgroup[] = &$mform->createElement(
             'advcheckbox',
             'scheduleexportxesnamed',
@@ -127,9 +131,12 @@ class scheduled_settings_form extends \moodleform {
             $xesgroup,
             'scheduleexportxesgroup',
             get_string('exportxes', 'local_pmlog'),
-            [' '],
+            [''],
             false
         );
+        $mform->setDefault('scheduleexportxes', 0);
+        $mform->setDefault('scheduleexportxesdetailed', 0);
+        $mform->setDefault('scheduleexportxesnamed', 0);
 
         $this->add_action_buttons(false, get_string('savechanges'));
     }

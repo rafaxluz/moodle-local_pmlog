@@ -11,15 +11,14 @@ The plugin converts Moodle standard log events into a structured activity log th
 - Manual log generation at course level
 - Background processing through Moodle ad-hoc tasks
 - Scheduled execution through Moodle scheduled tasks
-- Configurable case ID strategies
 - Sequential deduplication with configurable time windows
 - Per-student timeline view inside Moodle
 - Export in CSV and XES formats
-- Export modes for standard, detailed, and named output
+- Export modes for generic, anonymized, and named output
 
 ## Status
 
-- Version: `1.0.0`
+- Version: `1.0.1`
 - Maturity: `STABLE`
 - Component: `local_pmlog`
 
@@ -59,13 +58,12 @@ This page is used to configure scheduled builds.
 
 At course level, the plugin allows the user to:
 
-- select a case ID strategy;
 - define optional start and end dates;
 - limit processing to student actions only;
 - enable sequential deduplication;
 - enable stricter duplicate removal for the same activity;
 - configure deduplication and view-collapse windows;
-- generate CSV and XES files in standard, detailed, and named modes.
+- generate CSV and XES files in generic, anonymized, and named modes.
 
 When submitted, the process is queued as an ad-hoc task and executed by Moodle cron.
 
@@ -85,11 +83,10 @@ Available options include:
 
 - enabling or disabling scheduled builds;
 - selecting the courses to be processed;
-- defining the case ID strategy;
 - enabling student-only filtering;
 - configuring deduplication behavior;
 - setting deduplication and view-collapse windows;
-- enabling CSV and XES generation in standard, detailed, and named modes.
+- enabling CSV and XES generation in generic, anonymized, and named modes.
 
 The scheduled task is defined in `db/tasks.php` and, by default, runs daily at `02:00`. The schedule can be adjusted through Moodle scheduled task administration.
 
@@ -112,6 +109,10 @@ Relevant fields include:
 - `target`
 - `metajson`
 
+## Case Definition
+
+The plugin groups events by learner within the course. In practice, each exported trace represents one user in one course.
+
 ## Export Formats
 
 ### CSV
@@ -131,15 +132,15 @@ The CSV export contains:
 
 Available CSV modes:
 
-- `Standard`: exports the normalized activity label.
-- `Detailed`: exports the normalized activity label enriched with an anonymized module marker, such as `Quiz open [cmid:42]`.
+- `Generic`: exports the normalized activity label.
+- `Anonymized`: exports the normalized activity label enriched with an anonymized module marker, such as `Quiz open [cmid:42]`.
 - `Named`: exports the normalized activity label enriched with the real activity name, such as `Quiz open: Week 1 Quiz`.
 
 ### XES
 
 The XES export uses one trace per `caseid` and one event per normalized log row.
 
-Standard XES includes:
+Generic XES includes:
 
 - log-level `concept:name` using a neutral course identifier such as `course:123`
 - trace-level `concept:name` based on `caseid`
@@ -152,7 +153,7 @@ Standard XES includes:
 
 Additional XES modes:
 
-- `Detailed`: enriches the event-level `concept:name` with an anonymized module marker.
+- `Anonymized`: enriches the event-level `concept:name` with an anonymized module marker.
 - `Named`: uses real course names at log and trace level and enriches the event-level `concept:name` with the real activity name when available.
 
 ## Privacy

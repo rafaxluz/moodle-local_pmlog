@@ -35,21 +35,8 @@ class casebuilder {
     /** @var string One case per user within the course. */
     public const STRATEGY_USER_COURSE = 'user_course';
 
-    /** @var string One case per user and day. */
-    public const STRATEGY_USER_DAY = 'user_day';
-
-    /** @var string One case per user, course, and day. */
-    public const STRATEGY_USER_COURSE_DAY = 'user_course_day';
-
-    /** @var string[] Allowed case-id strategies. */
-    private const VALID_STRATEGIES = [
-        self::STRATEGY_USER_COURSE,
-        self::STRATEGY_USER_DAY,
-        self::STRATEGY_USER_COURSE_DAY,
-    ];
-
     /**
-     * Build a case ID from event context and strategy.
+     * Build a case ID from event context.
      *
      * @param int $userid The user ID.
      * @param int $courseid The course ID.
@@ -63,19 +50,7 @@ class casebuilder {
         int $timecreated,
         string $strategy = self::STRATEGY_USER_COURSE
     ): string {
-        $strategy = $this->normalise_strategy($strategy);
-
-        switch ($strategy) {
-            case self::STRATEGY_USER_DAY:
-                return 'u' . $userid . '-d' . gmdate('Ymd', $timecreated);
-
-            case self::STRATEGY_USER_COURSE_DAY:
-                return 'u' . $userid . '-c' . $courseid . '-d' . gmdate('Ymd', $timecreated);
-
-            case self::STRATEGY_USER_COURSE:
-            default:
-                return 'u' . $userid . '-c' . $courseid;
-        }
+        return 'u' . $userid . '-c' . $courseid;
     }
 
     /**
@@ -84,20 +59,6 @@ class casebuilder {
      * @return string[]
      */
     public static function valid_strategies(): array {
-        return self::VALID_STRATEGIES;
-    }
-
-    /**
-     * Normalise an incoming strategy.
-     *
-     * @param string $strategy Requested strategy.
-     * @return string
-     */
-    private function normalise_strategy(string $strategy): string {
-        if (!in_array($strategy, self::VALID_STRATEGIES, true)) {
-            return self::STRATEGY_USER_COURSE;
-        }
-
-        return $strategy;
+        return [self::STRATEGY_USER_COURSE];
     }
 }
