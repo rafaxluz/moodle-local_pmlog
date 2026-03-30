@@ -58,13 +58,7 @@ function local_pmlog_format_optional_time(int $timestamp): string {
  * @return string
  */
 function local_pmlog_case_strategy_label(string $strategy): string {
-    $labels = [
-        casebuilder::STRATEGY_USER_COURSE => get_string('caseidstrategy_user_course', 'local_pmlog'),
-        casebuilder::STRATEGY_USER_DAY => get_string('caseidstrategy_user_day', 'local_pmlog'),
-        casebuilder::STRATEGY_USER_COURSE_DAY => get_string('caseidstrategy_user_course_day', 'local_pmlog'),
-    ];
-
-    return $labels[$strategy] ?? get_string('caseidstrategy_user_course', 'local_pmlog');
+    return get_string('caseidstrategy_user_course', 'local_pmlog');
 }
 
 /**
@@ -267,8 +261,6 @@ if ($buildrunning) {
 
 if (!empty($storedoptions)) {
     $summary = [];
-    $summary[] = get_string('caseidstrategy', 'local_pmlog') . ': ' .
-        local_pmlog_case_strategy_label((string)($storedoptions['caseidstrategy'] ?? casebuilder::STRATEGY_USER_COURSE));
     $summary[] = get_string('onlystudents', 'local_pmlog') . ': ' .
         local_pmlog_yes_no(!empty($storedoptions['studentonly']));
     $summary[] = get_string('dedup', 'local_pmlog') . ': ' .

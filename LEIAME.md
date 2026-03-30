@@ -11,15 +11,14 @@ O plugin transforma eventos brutos do log padrão do Moodle em um log de ativida
 - Geração manual de logs no nível do curso
 - Processamento em segundo plano com tarefas ad-hoc do Moodle
 - Execução agendada com tarefas agendadas do Moodle
-- Estratégias configuráveis de `case ID`
 - Deduplicação sequencial com janelas de tempo configuráveis
 - Visualização de timeline por aluno dentro do Moodle
 - Exportação nos formatos CSV e XES
-- Modos de exportação padrão, detalhado e nomeado
+- Modos de exportação genérico, anonimizado e nomeado
 
 ## Estado Atual
 
-- Versão: `1.0.0`
+- Versão: `1.0.1`
 - Maturidade: `STABLE`
 - Componente: `local_pmlog`
 
@@ -59,13 +58,12 @@ Essa página é utilizada para configurar execuções agendadas.
 
 No nível do curso, o plugin permite:
 
-- selecionar a estratégia de `case ID`;
 - definir datas opcionais de início e fim;
 - limitar o processamento apenas às ações de alunos;
 - habilitar deduplicação sequencial;
 - habilitar remoção mais rígida de duplicatas da mesma atividade;
 - configurar janelas de deduplicação e colapso de visualizações;
-- gerar arquivos CSV e XES nos modos padrão, detalhado e nomeado.
+- gerar arquivos CSV e XES nos modos genérico, anonimizado e nomeado.
 
 Após o envio do formulário, o processamento é enfileirado como tarefa ad-hoc e executado pelo cron do Moodle.
 
@@ -85,11 +83,10 @@ As opções disponíveis incluem:
 
 - habilitar ou desabilitar execuções agendadas;
 - selecionar os cursos que serão processados;
-- definir a estratégia de `case ID`;
 - habilitar filtro apenas para alunos;
 - configurar o comportamento de deduplicação;
 - definir janelas de deduplicação e colapso de visualizações;
-- habilitar geração de CSV e XES nos modos padrão, detalhado e nomeado.
+- habilitar geração de CSV e XES nos modos genérico, anonimizado e nomeado.
 
 A tarefa agendada está definida em `db/tasks.php` e, por padrão, é executada diariamente às `02:00`. O agendamento pode ser ajustado na administração de tarefas agendadas do Moodle.
 
@@ -112,6 +109,10 @@ Campos relevantes:
 - `target`
 - `metajson`
 
+## Definição de Caso
+
+O plugin agrupa os eventos por aluno dentro do curso. Na prática, cada trace exportado representa um usuário em um curso.
+
 ## Formatos de Exportação
 
 ### CSV
@@ -131,15 +132,15 @@ O exportador CSV inclui:
 
 Modos disponíveis no CSV:
 
-- `Padrão`: exporta o rótulo normalizado da atividade.
-- `Detalhado`: exporta o rótulo normalizado enriquecido com um marcador anonimizado do módulo, como `Quiz open [cmid:42]`.
+- `Generic`: exporta o rótulo normalizado da atividade.
+- `Anonymized`: exporta o rótulo normalizado enriquecido com um marcador anonimizado do módulo, como `Quiz open [cmid:42]`.
 - `Nomeado`: exporta o rótulo normalizado enriquecido com o nome real da atividade, como `Quiz open: Week 1 Quiz`.
 
 ### XES
 
 O exportador XES usa um trace por `caseid` e um evento por linha do log normalizado.
 
-O XES padrão inclui:
+O XES genérico inclui:
 
 - `concept:name` no nível do log usando um identificador neutro do curso, como `course:123`
 - `concept:name` no nível do trace com base no `caseid`
@@ -152,7 +153,7 @@ O XES padrão inclui:
 
 Modos adicionais no XES:
 
-- `Detalhado`: enriquece o `concept:name` do evento com um marcador anonimizado do módulo.
+- `Anonymized`: enriquece o `concept:name` do evento com um marcador anonimizado do módulo.
 - `Nomeado`: usa nomes reais do curso no nível de log e trace e enriquece o `concept:name` do evento com o nome real da atividade quando disponível.
 
 ## Privacidade

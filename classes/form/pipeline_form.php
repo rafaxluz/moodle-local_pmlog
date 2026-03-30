@@ -61,14 +61,9 @@ class pipeline_form extends \moodleform {
             $mform->setType('courseid', PARAM_INT);
         }
 
-        $caseidoptions = [
-            casebuilder::STRATEGY_USER_COURSE => get_string('caseidstrategy_user_course', 'local_pmlog'),
-            casebuilder::STRATEGY_USER_DAY => get_string('caseidstrategy_user_day', 'local_pmlog'),
-            casebuilder::STRATEGY_USER_COURSE_DAY => get_string('caseidstrategy_user_course_day', 'local_pmlog'),
-        ];
-        $mform->addElement('select', 'caseidstrategy', get_string('caseidstrategy', 'local_pmlog'), $caseidoptions);
+        $mform->addElement('hidden', 'caseidstrategy', casebuilder::STRATEGY_USER_COURSE);
         $mform->setDefault('caseidstrategy', casebuilder::STRATEGY_USER_COURSE);
-        $mform->addHelpButton('caseidstrategy', 'caseidstrategy', 'local_pmlog');
+        $mform->setType('caseidstrategy', PARAM_ALPHAEXT);
 
         $mform->addElement('date_selector', 'timestart', get_string('startdate', 'local_pmlog'), ['optional' => true]);
 
@@ -100,19 +95,23 @@ class pipeline_form extends \moodleform {
 
         $csvgroup = [];
         $csvgroup[] = &$mform->createElement('checkbox', 'exportcsv', '', get_string('standard', 'local_pmlog'));
+        $csvgroup[] = &$mform->createElement('static', 'exportcsvspacer1', '', '&nbsp;&nbsp;&nbsp;');
         $csvgroup[] = &$mform->createElement('checkbox', 'exportcsvdetailed', '', get_string('detailed', 'local_pmlog'));
+        $csvgroup[] = &$mform->createElement('static', 'exportcsvspacer2', '', '&nbsp;&nbsp;&nbsp;');
         $csvgroup[] = &$mform->createElement('checkbox', 'exportcsvnamed', '', get_string('named', 'local_pmlog'));
-        $mform->addGroup($csvgroup, 'exportcsvgroup', get_string('exportcsv', 'local_pmlog'), [' '], false);
-        $mform->setDefault('exportcsv', 1);
+        $mform->addGroup($csvgroup, 'exportcsvgroup', get_string('exportcsv', 'local_pmlog'), [''], false);
+        $mform->setDefault('exportcsv', 0);
         $mform->setDefault('exportcsvdetailed', 0);
         $mform->setDefault('exportcsvnamed', 0);
 
         $xesgroup = [];
         $xesgroup[] = &$mform->createElement('checkbox', 'exportxes', '', get_string('standard', 'local_pmlog'));
+        $xesgroup[] = &$mform->createElement('static', 'exportxesspacer1', '', '&nbsp;&nbsp;&nbsp;');
         $xesgroup[] = &$mform->createElement('checkbox', 'exportxesdetailed', '', get_string('detailed', 'local_pmlog'));
+        $xesgroup[] = &$mform->createElement('static', 'exportxesspacer2', '', '&nbsp;&nbsp;&nbsp;');
         $xesgroup[] = &$mform->createElement('checkbox', 'exportxesnamed', '', get_string('named', 'local_pmlog'));
-        $mform->addGroup($xesgroup, 'exportxesgroup', get_string('exportxes', 'local_pmlog'), [' '], false);
-        $mform->setDefault('exportxes', 1);
+        $mform->addGroup($xesgroup, 'exportxesgroup', get_string('exportxes', 'local_pmlog'), [''], false);
+        $mform->setDefault('exportxes', 0);
         $mform->setDefault('exportxesdetailed', 0);
         $mform->setDefault('exportxesnamed', 0);
 
